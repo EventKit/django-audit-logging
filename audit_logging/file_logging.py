@@ -44,58 +44,52 @@ class LoggingFile(object):
         self.AuditEvent = AuditEvent
         self.regular_file = regular_file
         self.user_details = user_details
+        self.writes = 0
+        self.reads = 0
 
     def write(self, *args, **kwargs):
         res = self.regular_file.write(*args, **kwargs)
-        log_event(
-            event='FileWrite', resource_type='file', resource_uuid=self.regular_file.name,
-            user_details=self.user_details
-        )
+        self.writes += 1
         return res
 
     def writelines(self, *args, **kwargs):
         res = self.regular_file.writelines(*args, **kwargs)
-        log_event(
-            event='FileWrite', resource_type='file', resource_uuid=self.regular_file.name,
-            user_details=self.user_details
-        )
+        self.writes += 1
         return res
 
     def truncate(self, *args, **kwargs):
         res = self.regular_file.truncate(*args, **kwargs)
-        log_event(
-            event='FileWrite', resource_type='file', resource_uuid=self.regular_file.name,
-            user_details=self.user_details
-        )
+        self.writes += 1
         return res
 
     def read(self, *args, **kwargs):
         res = self.regular_file.read(*args, **kwargs)
-        log_event(
-            event='FileRead', resource_type='file', resource_uuid=self.regular_file.name,
-            user_details=self.user_details
-        )
+        self.reads += 1
         return res
 
     def readline(self, *args, **kwargs):
         res = self.regular_file.readline(*args, **kwargs)
-        log_event(
-            event='FileRead', resource_type='file', resource_uuid=self.regular_file.name,
-            user_details=self.user_details
-        )
+        self.reads += 1
         return res
 
     def readlines(self, *args, **kwargs):
         res = self.regular_file.readlines(*args, **kwargs)
-        log_event(event='FileRead', resource_type='file', resource_uuid=self.regular_file.name,
-            user_details=self.user_details
-        )
+        self.reads += 1
         return res
 
     def __enter__(self, *args, **kwargs):
+        log_event(
+            event='FileOpen', resource_type='file', resource_uuid=self.regular_file.name,
+            user_details=self.user_details
+        )
         return self
 
     def __exit__(self, *args, **kwargs):
+        event = "File{0}{1}Close".format('Read' if self.reads else '', 'Write' if self.writes else '')
+        log_event(
+            event=event, resource_type='file', resource_uuid=self.regular_file.name,
+            user_details=self.user_details
+        )
         self.regular_file.close()
 
     def __iter__(self, *args, **kwargs):
