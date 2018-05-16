@@ -22,7 +22,7 @@ from django.apps import AppConfig
 
 class AuditConfig(AppConfig):
     name = 'audit_logging'
-    verbose_name = 'Logging to provide file/django model CRUD audit trail'
+    verbose_name = 'Audit Trail'
 
     def ready(self):
         import audit_logging.signals  # noqa

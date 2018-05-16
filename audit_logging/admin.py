@@ -60,6 +60,8 @@ class AuditEventAdmin(admin.ModelAdmin):
         'resource_title'
     ]
 
+    list_filter = ('event', 'username', 'fullname')
+
     def __init__(self, *args, **kwargs):
         super(AuditEventAdmin, self).__init__(*args, **kwargs)
         self.list_display_links = None
