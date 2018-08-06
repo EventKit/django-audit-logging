@@ -68,16 +68,16 @@ class AuditTest(LoggedInTestCase):
         self.login()
 
         last_event = AuditEvent.objects.latest('datetime')
-        self.assertEquals(last_event.event, 'login')
+        self.assertEqual(last_event.event, 'login')
         self.client.logout()
         last_event = AuditEvent.objects.latest('datetime')
-        self.assertEquals(last_event.event, 'logout')
+        self.assertEqual(last_event.event, 'logout')
         self.client.login(
             username='bogus',
             password='bogus'
         )
         last_event = AuditEvent.objects.latest('datetime')
-        self.assertEquals(last_event.event, 'failed_login')
+        self.assertEqual(last_event.event, 'failed_login')
 
 
 class AuditAdminTest(LoggedInTestCase):

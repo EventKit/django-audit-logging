@@ -43,42 +43,15 @@ def log_event(instance, event=None):
         if d:
             if AUDIT_TO_FILE:
                 write_entry(d)
-#             audit_event = AuditEvent(
-#                 event=event
-#             )
-#             if d.get('user_details'):
-#                 logger.debug('got user_details from instance to log: {}'.format(d.get('user_details')))
-#                 if d.get('user_details').get('username'):
-#                     audit_event.username = d['user_details']['username']
-#                 if d.get('user_details').get('email'):
-#                     audit_event.email = d['user_details']['email']
-#                 if d.get('user_details').get('fullname'):
-#                     audit_event.fullname = d['user_details']['fullname']
-#                 if d.get('user_details').get('superuser'):
-#                     audit_event.superuser = d['user_details']['superuser']
-#                 if d.get('user_details').get('staff'):
-#                     audit_event.staff = d['user_details']['staff']
-#             if d.get('resource'):
-#                 logger.debug('got resource details from instance to log: {}'.format(d.get('resource')))
-#                 if d.get('resource').get('type'):
-#                     audit_event.resource_type = d['resource']['type']
-#                 if d.get('resource').get('id'):
-#                     logger.debug('setting resource_uuid to {}'.format(d['resource']['id']))
-#                     audit_event.resource_uuid = d['resource']['id']
-#                 if d.get('resource').get('title'):
-#                     audit_event.resource_title = d['resource']['title']
-#                 if d.get('resource').get('username'):
-#                     audit_event.username = d['resource']['username']
-#             audit_event.save()
             from audit_logging.utils import log_event
             user_details = getattr(audit_logging_thread_local, 'user_details', {})
-            logger.debug('Got user_details from audit_logging_thread_local: {} ')
+            logger.debug('Got user_details from audit_logging_thread_local: {}'.format(user_details).encode('utf-8'))
             resource = d.get('resource')
             resource_type = resource.get('type', 'unknown') if resource else 'unknown'
             resource_uuid = resource.get('id', 'unknown') if resource else 'unknown'
             log_event(event=event, resource_type=resource_type, resource_uuid=resource_uuid, user_details=user_details)
         else:
-            logger.debug('get_audit_crud_dict() returned nothing (normal if {} not in AUDIT_MODELS)'.format(instance))
+            logger.debug('get_audit_crud_dict() returned nothing (normal if {} not in AUDIT_MODELS)'.format(instance).encode('utf-8'))
     except Exception as ex:
         logger.exception('Exception during audit event.')
 
@@ -90,7 +63,7 @@ def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
     """
     if isinstance(instance, AuditEvent):
         return
-    logger.debug('Received post_save signal for: {} ({})'.format(instance, type(instance)))
+    logger.debug('Received post_save signal for: {} ({})'.format(instance, type(instance)).encode('utf-8'))
 
     if created:
         event = 'create'
@@ -105,7 +78,7 @@ def post_delete(sender, instance, using, **kwargs):
     """
     if isinstance(instance, AuditEvent):
         return
-    logger.debug('Received post_delete signal for: {} ({})'.format(instance, type(instance)))
+    logger.debug('Received post_delete signal for: {} ({})'.format(instance, type(instance)).encode('utf-8'))
 
     log_event(instance, 'delete')
 

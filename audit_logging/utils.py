@@ -88,7 +88,7 @@ def get_audit_crud_dict(instance, event):
             d['event_time_gmt'] = get_time_gmt()
             break
 
-    logger.debug('CRUD details for {}: {}'.format(instance, d))
+    logger.debug('CRUD details for {}: {}'.format(instance, d).encode('utf-8'))
 
     return d
 
@@ -120,7 +120,7 @@ def get_resource(instance):
     # Check that instance is one of the models that's configured for logging
     audit_model_lookup = configure_audit_models()
     resource_type = None
-    for resource_type, model_type in audit_model_lookup.items():
+    for resource_type, model_type in list(audit_model_lookup.items()):
         if isinstance(instance, model_type):
             resource_type = resource_type
             break
