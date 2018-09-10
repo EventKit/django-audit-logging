@@ -45,6 +45,6 @@ class AuditEvent(models.Model):
 
     def __str__(self):
         d = model_to_dict(self)
-        repr = ', '.join(['{}: {}'.format(field_name, field_value) for field_name, field_value in d.items()])
+        repr = ', '.join(['{}: {}'.format(field_name, field_value) for field_name, field_value in list(d.items())])
         repr = 'AuditEvent({})'.format(repr)
         return repr

@@ -51,8 +51,7 @@ def log_event(instance, event=None):
             resource_uuid = resource.get('id', 'unknown') if resource else 'unknown'
             log_event(event=event, resource_type=resource_type, resource_uuid=resource_uuid, user_details=user_details)
         else:
-            logger.debug('get_audit_crud_dict() returned nothing (normal if {} not in AUDIT_MODELS)'.format(
-                unicode(instance).encode('utf-8')))
+            logger.debug('get_audit_crud_dict() returned nothing (normal if {} not in AUDIT_MODELS)'.format(str(instance).encode('utf-8')))
     except Exception as ex:
         logger.exception('Exception during audit event.')
 
@@ -64,7 +63,7 @@ def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
     """
     if isinstance(instance, AuditEvent):
         return
-    logger.debug('Received post_save signal for: {} ({})'.format(unicode(instance).encode('utf-8'), str(type(instance)).encode('utf-8')))
+    logger.debug('Received post_save signal for: {} ({})'.format(str(instance).encode('utf-8'), str(type(instance)).encode('utf-8')))
 
     if created:
         event = 'create'
@@ -79,7 +78,8 @@ def post_delete(sender, instance, using, **kwargs):
     """
     if isinstance(instance, AuditEvent):
         return
-    logger.debug('Received post_delete signal for: {} ({})'.format(unicode(instance).encode('utf-8'), str(type(instance)).encode('utf-8')))
+    logger.debug('Received post_delete signal for: {} ({})'.format(str(instance).encode('utf-8'), str(type(instance)).encode('utf-8')))
+
 
     log_event(instance, 'delete')
 
