@@ -29,7 +29,6 @@ from audit_logging.utils import (
     get_audit_crud_dict, get_audit_login_dict, get_time_gmt, write_entry, audit_logging_thread_local
 )
 
-
 logger = logging.getLogger(__name__)
 logger.info('Using audit_logging version: {}'.format(audit_logging_version))
 
@@ -45,13 +44,14 @@ def log_event(instance, event=None):
                 write_entry(d)
             from audit_logging.utils import log_event
             user_details = getattr(audit_logging_thread_local, 'user_details', {})
-            logger.debug('Got user_details from audit_logging_thread_local: {}'.format(user_details).encode('utf-8'))
+            logger.debug(
+                'Got user_details from audit_logging_thread_local: {}'.format(str(user_details).encode('utf-8')))
             resource = d.get('resource')
             resource_type = resource.get('type', 'unknown') if resource else 'unknown'
             resource_uuid = resource.get('id', 'unknown') if resource else 'unknown'
             log_event(event=event, resource_type=resource_type, resource_uuid=resource_uuid, user_details=user_details)
         else:
-            logger.debug('get_audit_crud_dict() returned nothing (normal if {} not in AUDIT_MODELS)'.format(instance).encode('utf-8'))
+            logger.debug('get_audit_crud_dict() returned nothing (normal if {} not in AUDIT_MODELS)'.format(str(instance).encode('utf-8')))
     except Exception as ex:
         logger.exception('Exception during audit event.')
 
@@ -63,7 +63,7 @@ def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
     """
     if isinstance(instance, AuditEvent):
         return
-    logger.debug('Received post_save signal for: {} ({})'.format(instance, type(instance)).encode('utf-8'))
+    logger.debug('Received post_save signal for: {} ({})'.format(str(instance).encode('utf-8'), str(type(instance)).encode('utf-8')))
 
     if created:
         event = 'create'
@@ -78,7 +78,8 @@ def post_delete(sender, instance, using, **kwargs):
     """
     if isinstance(instance, AuditEvent):
         return
-    logger.debug('Received post_delete signal for: {} ({})'.format(instance, type(instance)).encode('utf-8'))
+    logger.debug('Received post_delete signal for: {} ({})'.format(str(instance).encode('utf-8'), str(type(instance)).encode('utf-8')))
+
 
     log_event(instance, 'delete')
 
