@@ -30,8 +30,6 @@ from audit_logging.utils import (
 )
 
 logger = logging.getLogger(__name__)
-logger.info('Using audit_logging version: {}'.format(audit_logging_version))
-
 
 def log_event(instance, event=None):
     if isinstance(instance, AuditEvent):
