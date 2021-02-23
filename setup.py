@@ -42,6 +42,6 @@ setup(
     include_package_data=True,
     package_data={'audit_logging': ['version']},
     install_requires=[
-        "Django >=1.8.7, <= 2.3",
+        "Django >=1.8.7, <= 4.0.0",
     ],
 )
